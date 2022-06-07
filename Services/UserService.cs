@@ -11,7 +11,7 @@ namespace UserDetailsApp.Services
 {
     public interface IUserService
     {
-        AuthenticateResponse Authenticate(AuthenticateRequest model);
+        AuthenticateResponse Login(AuthenticateRequest model);
         IEnumerable<User> GetAll();
         User GetById(int id);
         void Register(RegisterRequest model);
@@ -35,14 +35,14 @@ namespace UserDetailsApp.Services
             _mapper = mapper;
         }
 
-        public AuthenticateResponse Authenticate(AuthenticateRequest model)
+        public AuthenticateResponse Login(AuthenticateRequest model)
         {
             var user = _context.Users.SingleOrDefault(x => x.Email == model.Email);
 
             // validate
             if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash))
                 throw new AppException("Email or password is incorrect");
-
+            
             // authentication successful
             var response = _mapper.Map<AuthenticateResponse>(user);
             response.Token = _jwtUtils.GenerateToken(user);
@@ -63,7 +63,7 @@ namespace UserDetailsApp.Services
         {
             // validate
             if (_context.Users.Any(x => x.Email == model.Email))
-                throw new AppException("Email '" + model.Email + "' is already taken");
+                throw new AppException("Email '" + model.Email + "' is already exist");
 
             // map model to new user object
             var user = _mapper.Map<User>(model);
@@ -82,7 +82,7 @@ namespace UserDetailsApp.Services
 
             // validate
             if (model.Email != user.Email && _context.Users.Any(x => x.Email == model.Email))
-                throw new AppException("Email '" + model.Email + "' is already taken");
+                throw new AppException("Email '" + model.Email + "' is already exist");
 
             // hash password if it was entered
             if (!string.IsNullOrEmpty(model.Password))

@@ -14,11 +14,10 @@ namespace UserDetailsApp.Models.Users
         [Required]
         public long PhoneNo { get; set; }
 
-        [Required]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
-        [StringLength(60, MinimumLength = 6)]
-        [Required]
+        [Required, MinLength(6, ErrorMessage ="Password must be minimum of 6 Charactors")]
         public string Password { get; set; }
     }
 }

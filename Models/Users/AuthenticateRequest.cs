@@ -4,7 +4,7 @@ namespace UserDetailsApp.Models.Users
 {
     public class AuthenticateRequest
     {
-        [Required]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         [Required]

@@ -28,11 +28,11 @@ namespace UserDetailsApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate(AuthenticateRequest model)
+        [HttpPost("login")]
+        public IActionResult Login(AuthenticateRequest model)
         {
-            var response = _userService.Authenticate(model);
-            return Ok(response);
+            var response = _userService.Login(model);
+            return Ok(new { message = "Success" });
         }
 
         [AllowAnonymous]
