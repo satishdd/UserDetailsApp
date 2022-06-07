@@ -26,6 +26,9 @@ namespace UserDetailsApp.Helpers
                         return true;
                     }
                 ));
+
+            // User -> GetUserDetails
+            CreateMap<User, GetUserDetails>();
         }
     }
 }

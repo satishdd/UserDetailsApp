@@ -1,5 +1,3 @@
-using System;
-
 namespace UserDetailsApp.Authorization
 {
     [AttributeUsage(AttributeTargets.Method)]

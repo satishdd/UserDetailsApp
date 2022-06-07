@@ -28,18 +28,18 @@ namespace UserDetailsApp.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("login")]
-        public IActionResult Login(AuthenticateRequest model)
-        {
-            var response = _userService.Login(model);
-            return Ok(new { message = "Success" });
-        }
-
-        [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest model)
         {
             _userService.Register(model);
+            return Ok(new { message = "Success" });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public IActionResult Login(AuthenticateRequest model)
+        {
+            _userService.Login(model);
             return Ok(new { message = "Success" });
         }
 
@@ -57,18 +57,11 @@ namespace UserDetailsApp.Controllers
             return Ok(user);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, UpdateRequest model)
+        [HttpGet("{email}")]
+        public IActionResult GetByEmail(string email)
         {
-            _userService.Update(id, model);
-            return Ok(new { message = "User updated successfully" });
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            _userService.Delete(id);
-            return Ok(new { message = "User deleted successfully" });
+            var uDeatails = _userService.GetByEmail(email);
+            return Ok(uDeatails);
         }
     }
 }

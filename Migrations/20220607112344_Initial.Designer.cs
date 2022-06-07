@@ -11,8 +11,8 @@ using UserDetailsApp.Helpers;
 namespace UserDetailsApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220606135455_InitialDatabaseMigration")]
-    partial class InitialDatabaseMigration
+    [Migration("20220607112344_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

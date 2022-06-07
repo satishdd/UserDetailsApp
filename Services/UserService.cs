@@ -14,9 +14,8 @@ namespace UserDetailsApp.Services
         AuthenticateResponse Login(AuthenticateRequest model);
         IEnumerable<User> GetAll();
         User GetById(int id);
+        GetUserDetails GetByEmail(string email);
         void Register(RegisterRequest model);
-        void Update(int id, UpdateRequest model);
-        void Delete(int id);
     }
 
     public class UserService : IUserService
@@ -35,7 +34,7 @@ namespace UserDetailsApp.Services
             _mapper = mapper;
         }
 
-        public AuthenticateResponse Login(AuthenticateRequest model)
+        public AuthenticateResponse? Login(AuthenticateRequest model)
         {
             var user = _context.Users.SingleOrDefault(x => x.Email == model.Email);
 
@@ -43,10 +42,10 @@ namespace UserDetailsApp.Services
             if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash))
                 throw new AppException("Email or password is incorrect");
             
-            // authentication successful
-            var response = _mapper.Map<AuthenticateResponse>(user);
-            response.Token = _jwtUtils.GenerateToken(user);
-            return response;
+            //// authentication successful
+            //var response = _mapper.Map<AuthenticateResponse>(user);
+            //response.Token = _jwtUtils.GenerateToken(user);
+            return null;
         }
 
         public IEnumerable<User> GetAll()
@@ -76,38 +75,34 @@ namespace UserDetailsApp.Services
             _context.SaveChanges();
         }
 
-        public void Update(int id, UpdateRequest model)
-        {
-            var user = getUser(id);
-
-            // validate
-            if (model.Email != user.Email && _context.Users.Any(x => x.Email == model.Email))
-                throw new AppException("Email '" + model.Email + "' is already exist");
-
-            // hash password if it was entered
-            if (!string.IsNullOrEmpty(model.Password))
-                user.PasswordHash = BCryptNet.HashPassword(model.Password);
-
-            // copy model to user and save
-            _mapper.Map(model, user);
-            _context.Users.Update(user);
-            _context.SaveChanges();
-        }
-
-        public void Delete(int id)
-        {
-            var user = getUser(id);
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
-
-        // helper methods
-
         private User getUser(int id)
         {
             var user = _context.Users.Find(id);
             if (user == null) throw new KeyNotFoundException("User not found");
             return user;
+        }
+        private User GetUserbyMailId(string email)
+        {
+            var user = _context.Users.Where(u => u.Email == email);
+            if (user == null) throw new KeyNotFoundException("User not found");
+            return (User)user;
+        }
+
+        public GetUserDetails GetByEmail(string email)
+        {
+            var user = GetUserbyMailId(email);
+            var uModel = new GetUserDetails();
+
+            if (user != null)
+            {
+                uModel = new GetUserDetails
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNo = user.PhoneNo,
+                };
+            }
+            return uModel;
         }
     }
 }
